@@ -1,0 +1,32 @@
+- hosts: jenkins
+  roles:
+    - ssh-connection
+    
+- hosts: localhost
+  tasks:
+    - name: clone git
+      git:
+        dest: /home/Manasa
+        repo: git@github.com:tejatestgit/manasa.git
+        clone: yes
+        update: yes
+
+- hosts: jenkins
+  remote_user: Manasa
+  tasks:
+    - name: Create a Dir
+      file:
+        name: TestFolder
+        state: Directory
+    - name: copy files
+      copy:
+        src: /home/Manasa/manasa/{{ item }} 
+        dest: /home/Manasa/TestFolder
+        mode: 755
+      with_items:
+        - Test.txt
+        
+- hosts: localhost
+  tasks:
+  - name: delete files in host
+    command: rm -rf manasa
