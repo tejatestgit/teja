@@ -1,0 +1,13 @@
+# figure out homedir location for your local key
+- name: Gathering user home directory location
+  local_action: shell echo $HOME
+  register: userhome
+  ignore_errors: true
+
+# copy local user's key
+- name: Copy id_rsa.pub if found locally
+  authorized_key:
+    user=Manasa
+    key="{{ lookup('file', '{{userhome.stdout}}/.ssh/id_rsa.pub') }}"
+    manage_dir=yes
+  ignore_errors: true
